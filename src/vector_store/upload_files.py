@@ -5,33 +5,50 @@ from openai import OpenAI
 
 load_dotenv()
 
-client = OpenAI()
-
 MARKDOWN_DIR = Path("data/markdown")
 VECTOR_STORE_ID_FILE = Path("vector_store_id.txt")
 
 
-def main():
-    vector_store_id = VECTOR_STORE_ID_FILE.read_text().strip()
+def get_markdown_files(markdown_dir=MARKDOWN_DIR):
+    return list(markdown_dir.glob("*.md"))
 
-    markdown_files = list(MARKDOWN_DIR.glob("*.md"))
 
+def upload_markdown_files(client, markdown_files):
     file_ids = []
 
     for file_path in markdown_files:
         print(f"Uploading {file_path.name}")
 
-        with open(file_path, "rb") as file:
+        with file_path.open("rb") as file:
             uploaded_file = client.files.create(
                 file=file,
-                purpose="assistants"
+                purpose="assistants",
             )
 
         file_ids.append(uploaded_file.id)
 
+    return file_ids
+
+
+def attach_files_to_vector_store(client, vector_store_id, file_ids):
+    return client.vector_stores.file_batches.create(
+        vector_store_id=vector_store_id,
+        file_ids=file_ids,
+    )
+
+
+def main():
+    client = OpenAI()
+
+    vector_store_id = VECTOR_STORE_ID_FILE.read_text().strip()
+    markdown_files = get_markdown_files()
+
+    file_ids = upload_markdown_files(client, markdown_files)
+
     print(f"Uploaded {len(file_ids)} files")
 
-    client.vector_stores.file_batches.create(
+    attach_files_to_vector_store(
+        client=client,
         vector_store_id=vector_store_id,
         file_ids=file_ids,
     )

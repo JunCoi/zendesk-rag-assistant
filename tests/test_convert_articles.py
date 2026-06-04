@@ -46,5 +46,5 @@ def test_convert_article_adds_title_source_and_body():
     result = convert_article(article)
 
     assert "# Accepted Payment Methods" in result
-    assert "Source: https://support.optisigns.com/example" in result
+    assert "Article URL: https://support.optisigns.com/example" in result
     assert "Credit cards are accepted." in result
