@@ -28,15 +28,17 @@ def fetch_articles():
 
     return articles[:ARTICLE_LIMIT]
 
-def save_articales(articles):
+def save_articles(articles, output_dir=RAW_DIR):
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     for article in articles:
         article_id = article["id"]
-        file_path = RAW_DIR / f"{article_id}.json"
+        file_path = output_dir / f"{article_id}.json"
 
         with file_path.open("w", encoding="utf-8") as file:
             json.dump(article, file, ensure_ascii=False, indent=2)
 
-    print(f"Saved {len(articles)} raw articles to {RAW_DIR}")
+    print(f"Saved {len(articles)} raw articles to {output_dir}")
 
 if __name__ == "__main__":
     articles = fetch_articles()
