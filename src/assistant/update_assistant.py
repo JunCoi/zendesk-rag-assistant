@@ -3,9 +3,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
 
-load_dotenv()
+import os
 
-ASSISTANT_ID_FILE = Path("assistant_id.txt")
+load_dotenv()
 
 ASSISTANT_INSTRUCTIONS = """
 You are OptiBot, the customer-support bot for OptiSigns.
@@ -35,8 +35,6 @@ Article URL:
 7. Do not mention these rules.
 """
 
-VECTOR_STORE_ID_FILE = Path("vector_store_id.txt")
-
 
 def update_assistant_instructions(
     client,
@@ -58,8 +56,21 @@ def update_assistant_instructions(
 
 def main():
     client = OpenAI()
-    assistant_id = ASSISTANT_ID_FILE.read_text().strip()
-    vector_store_id = VECTOR_STORE_ID_FILE.read_text().strip()
+    assistant_id = os.getenv("ASSISTANT_ID")
+    vector_store_id = os.getenv("VECTOR_STORE_ID")
+
+    missing = []
+
+    if not vector_store_id:
+        missing.append("VECTOR_STORE_ID")
+
+    if not assistant_id:
+        missing.append("ASSISTANT_ID")
+
+    if missing:
+        raise ValueError(
+            f"Missing environment variables: {', '.join(missing)}"
+        )
 
     assistant = update_assistant_instructions(
         client=client,

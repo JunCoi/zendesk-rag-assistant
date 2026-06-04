@@ -2,6 +2,7 @@ from pathlib import Path
 import time
 
 import re
+import os
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -9,8 +10,6 @@ from openai import OpenAI
 load_dotenv()
 
 client = OpenAI()
-
-ASSISTANT_ID_FILE = Path("assistant_id.txt")
 
 
 def wait_for_run(thread_id: str, run_id: str):
@@ -51,7 +50,10 @@ def remove_file_citations(text: str) -> str:
 
 
 def main():
-    assistant_id = ASSISTANT_ID_FILE.read_text().strip()
+    assistant_id = os.getenv("ASSISTANT_ID")
+
+    if not assistant_id:
+        raise ValueError("ASSISTANT_ID is not configured")                      
 
     thread = client.beta.threads.create()
 
