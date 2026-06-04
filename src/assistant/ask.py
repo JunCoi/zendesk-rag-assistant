@@ -1,6 +1,8 @@
 from pathlib import Path
 import time
 
+import re
+
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -44,6 +46,10 @@ def get_latest_answer(thread_id: str):
     return "No answer found"
 
 
+def remove_file_citations(text: str) -> str:
+    return re.sub(r"【[^】]*†[^】]*】", "", text).strip()
+
+
 def main():
     assistant_id = ASSISTANT_ID_FILE.read_text().strip()
 
@@ -71,9 +77,10 @@ def main():
         wait_for_run(thread.id, run.id)
 
         answer = get_latest_answer(thread.id)
+        clean_answer = remove_file_citations(answer)
 
         print("\nAnswer:")
-        print(answer)
+        print(clean_answer)
         print()
 
 

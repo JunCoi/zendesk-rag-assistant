@@ -2,21 +2,26 @@ from unittest.mock import Mock
 
 from src.vector_store.create_store import (
     VECTOR_STORE_NAME,
-    create_vector_store,
+    get_or_create_vector_store,
     save_vector_store_id,
 )
 
 
-def test_create_vector_store_calls_openai_client():
+def test_get_or_create_vector_store_calls_openai_client():
     mock_client = Mock()
-    mock_client.vector_stores.create.return_value.id = "vs_test123"
+    existing_store = Mock()
+    existing_store.id = "vs_test123"
+    existing_store.name = VECTOR_STORE_NAME
 
-    vector_store = create_vector_store(mock_client)
+    stores_response = Mock()
+    stores_response.data = [existing_store]
 
-    mock_client.vector_stores.create.assert_called_once_with(
-        name=VECTOR_STORE_NAME
-    )
+    mock_client.vector_stores.list.return_value = stores_response
+
+    vector_store = get_or_create_vector_store(mock_client)
+
     assert vector_store.id == "vs_test123"
+    assert vector_store.name == VECTOR_STORE_NAME
 
 
 def test_save_vector_store_id_writes_file(tmp_path):

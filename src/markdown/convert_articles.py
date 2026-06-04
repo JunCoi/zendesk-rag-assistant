@@ -37,7 +37,7 @@ def convert_article(article: dict) -> str:
 
     return f"""# {title}
 
-Source: {url}
+Article URL: {url}
 
 {body_markdown}
 """
