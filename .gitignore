@@ -1,0 +1,11 @@
+.venv/
+.env
+
+__pycache__/
+*.pyc
+
+data/raw/
+data/markdown/
+
+vector_store_id.txt
+assistant_id.txt
