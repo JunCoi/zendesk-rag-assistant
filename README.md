@@ -17,7 +17,7 @@ Create `.env`:
 
 ```bash
 OPENAI_API_KEY=...
-ZENDESK_SUBDOMAIN=support
+ZENDESK_SUBDOMAIN=support.optisigns.com
 ```
 
 Install dependencies:
