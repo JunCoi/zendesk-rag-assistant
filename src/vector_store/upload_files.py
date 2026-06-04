@@ -3,10 +3,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
 
+import os
+
 load_dotenv()
 
 MARKDOWN_DIR = Path("data/markdown")
-VECTOR_STORE_ID_FILE = Path("vector_store_id.txt")
 
 
 def get_markdown_files(markdown_dir=MARKDOWN_DIR):
@@ -40,7 +41,11 @@ def attach_files_to_vector_store(client, vector_store_id, file_ids):
 def main():
     client = OpenAI()
 
-    vector_store_id = VECTOR_STORE_ID_FILE.read_text().strip()
+    vector_store_id = os.getenv("VECTOR_STORE_ID")
+
+    if not vector_store_id:
+        raise ValueError("VECTOR_STORE_ID is not configured")
+    
     markdown_files = get_markdown_files()
 
     file_ids = upload_markdown_files(client, markdown_files)

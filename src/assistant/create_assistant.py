@@ -3,9 +3,10 @@ from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
 
+import os
+
 load_dotenv()
 
-VECTOR_STORE_ID_FILE = Path("vector_store_id.txt")
 ASSISTANT_ID_FILE = Path("assistant_id.txt")
 
 ASSISTANT_NAME = "Support Knowledge Assistant"
@@ -40,7 +41,10 @@ def save_assistant_id(assistant_id: str, output_file=ASSISTANT_ID_FILE):
 
 def main():
     client = OpenAI()
-    vector_store_id = VECTOR_STORE_ID_FILE.read_text().strip()
+    vector_store_id = os.getenv("VECTOR_STORE_ID")
+
+    if not vector_store_id:
+        raise ValueError("VECTOR_STORE_ID is not configured")
 
     assistant = create_assistant(
         client=client,
