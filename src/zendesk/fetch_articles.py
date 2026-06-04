@@ -42,4 +42,4 @@ def save_articles(articles, output_dir=RAW_DIR):
 
 if __name__ == "__main__":
     articles = fetch_articles()
-    save_articales(articles)
+    save_articles(articles)
